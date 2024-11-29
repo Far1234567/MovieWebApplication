@@ -1,0 +1,33 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+
+@model MovieResponse
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+
+<h1>Popular Movies</h1>
+
+ @if (Model.Results != null && Model.Results.Count > 0)
+{
+    <div class="movies">
+        @foreach (var movie in Model.Results)
+        {
+            <div class="movie">
+                <h2>@movie.Title</h2>
+                <p><strong>Release Date:</strong> @movie.ReleaseDate</p>
+                <p>@movie.Overview</p>
+                <p><strong>Rating:</strong> @movie.VoteAverage</p> 
+                @* <img src="https://image.tmdb.org/t/p/w500@movie.PosterPath" alt="Movie Poster" /> *@
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No movies available.</p>
+}
+
