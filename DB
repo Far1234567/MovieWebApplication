@@ -1,0 +1,43 @@
+USE [MoviesDB]
+GO
+
+/****** Object:  StoredProcedure [dbo].[sp_Pagination]    Script Date: 01-12-2024 17:01:20 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+CREATE PROCEDURE [dbo].[sp_Pagination]
+	@SearchTerm nvarchar(100),
+    @PageNumber INT = 1,    -- Page number parameter with default of 1
+    @PageSize INT = 25      -- Page size parameter with default of 25
+AS
+BEGIN
+    BEGIN TRY
+        -- Calculate the starting row number based on the page number and page size
+        DECLARE @Offset INT = (@PageNumber - 1) * @PageSize;
+
+        -- Select records with pagination
+        SELECT 
+           *,ROW_NUMBER() over(order by id desc) as rownum
+        FROM 
+            Movies AS b WITH (NOLOCK)
+			where (@SearchTerm IS NULL OR Title LIKE '%' + @SearchTerm + '%')
+			order by Id
+           offset @Offset ROWS
+        FETCH NEXT @PageSize ROWS ONLY;
+    END TRY
+    BEGIN CATCH
+        -- Handle errors
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR (@ErrorMessage, 16, 1);
+    END CATCH
+END;
+
+GO
+
+
